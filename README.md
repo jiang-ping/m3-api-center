@@ -2,6 +2,17 @@
 
 A metadata-driven API development tool that allows you to define your API structure once and generate TypeScript types, server stubs, and client API functions automatically.
 
+## Screenshots
+
+**Metadata Editor - Data Types**
+![Data Types Editor](https://github.com/user-attachments/assets/87b34c4a-3c20-44de-91b2-774bbf81336d)
+
+**HTTP Interfaces Editor**
+![HTTP Interfaces](https://github.com/user-attachments/assets/a3a91759-fbaf-45b0-a872-d6e9763a76f8)
+
+**JSON View**
+![JSON View](https://github.com/user-attachments/assets/e17b43bb-dc4e-47aa-bb59-40da30d748c2)
+
 ## Features
 
 - **Browser-based Metadata Editor**: Visual editor built with Vite + Preact + TypeScript
@@ -38,6 +49,8 @@ npm run dev
 ```
 
 This will start the development server. Open your browser to edit the metadata visually.
+
+For a detailed guide, see [USAGE.md](USAGE.md).
 
 ### Generate Code
 
