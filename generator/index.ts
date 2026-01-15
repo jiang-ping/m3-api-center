@@ -100,7 +100,12 @@ function generateTypeDeclarations(metadata: Metadata): string {
 function generateServerStubs(metadata: Metadata): string {
   let output = '// Auto-generated server API stubs\n';
   output += 'import express, { Request, Response } from \'express\';\n';
-  output += 'import { ' + metadata.dataTypes.map(dt => dt.name).join(', ') + ' } from \'./types\';\n\n';
+  
+  // Only add import if there are data types
+  if (metadata.dataTypes.length > 0) {
+    output += 'import { ' + metadata.dataTypes.map(dt => dt.name).join(', ') + ' } from \'./types\';\n';
+  }
+  output += '\n';
   
   output += 'export function setupRoutes(app: express.Application) {\n';
   
@@ -140,7 +145,12 @@ function generateServerStubs(metadata: Metadata): string {
 
 function generateClientAPI(metadata: Metadata): string {
   let output = '// Auto-generated client API\n';
-  output += 'import { ' + metadata.dataTypes.map(dt => dt.name).join(', ') + ' } from \'./types\';\n\n';
+  
+  // Only add import if there are data types
+  if (metadata.dataTypes.length > 0) {
+    output += 'import { ' + metadata.dataTypes.map(dt => dt.name).join(', ') + ' } from \'./types\';\n';
+  }
+  output += '\n';
   
   for (const api of metadata.httpInterfaces) {
     const params: string[] = [];
@@ -201,16 +211,37 @@ function generateClientAPI(metadata: Metadata): string {
 }
 
 function main() {
-  // Use process.cwd() to get the project root directory
+  // Get the current working directory (where the script is run from)
   const projectRoot = process.cwd();
   const metadataPath = path.join(projectRoot, 'data/metadata.json');
   const outputDir = path.join(projectRoot, 'generated');
   
+  // Check if metadata file exists
+  if (!fs.existsSync(metadataPath)) {
+    console.error(`Error: Metadata file not found at ${metadataPath}`);
+    console.error('Please ensure data/metadata.json exists in the project root.');
+    process.exit(1);
+  }
+  
+  // Create output directory if it doesn't exist
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
   
-  const metadata: Metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf-8'));
+  // Read and parse metadata file
+  let metadata: Metadata;
+  try {
+    const fileContent = fs.readFileSync(metadataPath, 'utf-8');
+    metadata = JSON.parse(fileContent);
+  } catch (error) {
+    console.error(`Error: Failed to parse metadata file at ${metadataPath}`);
+    if (error instanceof SyntaxError) {
+      console.error('The file contains invalid JSON:', error.message);
+    } else {
+      console.error('Error reading file:', (error as Error).message);
+    }
+    process.exit(1);
+  }
   
   // Generate type declarations
   const types = generateTypeDeclarations(metadata);
