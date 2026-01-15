@@ -1,0 +1,66 @@
+{
+  "dataTypes": [
+    {
+      "kind": "enum",
+      "name": "UserRole",
+      "values": ["admin", "user", "guest"]
+    },
+    {
+      "kind": "alias",
+      "name": "CompanyName",
+      "baseType": "string"
+    },
+    {
+      "kind": "object",
+      "name": "User",
+      "fields": [
+        { "name": "id", "type": "number" },
+        { "name": "name", "type": "string" },
+        { "name": "email", "type": "string" },
+        { "name": "role", "type": { "type": "reference", "name": "UserRole" } },
+        { "name": "company", "type": { "type": "reference", "name": "CompanyName" }, "optional": true }
+      ]
+    },
+    {
+      "kind": "object",
+      "name": "CreateUserRequest",
+      "fields": [
+        { "name": "name", "type": "string" },
+        { "name": "email", "type": "string" },
+        { "name": "role", "type": { "type": "reference", "name": "UserRole" } }
+      ]
+    }
+  ],
+  "httpInterfaces": [
+    {
+      "name": "getUser",
+      "method": "GET",
+      "path": "/api/users/:id",
+      "urlParams": [
+        { "name": "id", "type": "number" }
+      ],
+      "responseType": { "type": "reference", "name": "User" }
+    },
+    {
+      "name": "listUsers",
+      "method": "GET",
+      "path": "/api/users",
+      "responseType": { "kind": "array", "itemType": { "type": "reference", "name": "User" } }
+    },
+    {
+      "name": "createUser",
+      "method": "POST",
+      "path": "/api/users",
+      "bodyType": { "type": "reference", "name": "CreateUserRequest" },
+      "responseType": { "type": "reference", "name": "User" },
+      "headers": ["Content-Type"]
+    },
+    {
+      "name": "streamEvents",
+      "method": "GET",
+      "path": "/api/events",
+      "responseType": "string",
+      "isSSE": true
+    }
+  ]
+}
